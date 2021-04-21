@@ -1,0 +1,1 @@
+Backend of project 'Restaurant Manager'. ASP.NET Web API, .NET 5 based.
