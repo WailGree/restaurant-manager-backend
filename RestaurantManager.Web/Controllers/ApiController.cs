@@ -17,17 +17,28 @@ namespace RestaurantManager.Web.Controllers
         private readonly RestaurantContext _context;
         private readonly SQLMenuRepository _menu;
         private readonly SQLUserRepository _users;
+        private SQLUserRepository _sqlUserHandler;
 
         public ApiController(RestaurantContext context)
         {
             _context = context;
+            _sqlUserHandler = new SQLUserRepository(context);
         }
 
 
-        [HttpGet()]
-        public string GetFavoriteRecipes()
+        [HttpPost("registration")]
+        public IActionResult Registration(RegistrationCredentials registrationCred)
         {
-            return "data";
+            User regUser = _sqlUserHandler.GetUser(registrationCred.UserName);
+            bool isLoginningUserEmailTaken = _sqlUserHandler.GetUsers().Any(x => x.Email == registrationCred.Email);
+            if (regUser != null || isLoginningUserEmailTaken)
+            {
+                return BadRequest("username or email already taken");
+            }
+
+            User user = new User(registrationCred.UserName, registrationCred.Email, registrationCred.Password); // we should validate the password as well if it strong enough
+            _sqlUserHandler.AddUser(user);
+            return Ok("successful registration");
         }
 
 
