@@ -77,7 +77,23 @@ namespace RestaurantManager.Web.Controllers
             return BadRequest();
         }
 
+        [HttpDelete("delete")]
+        public IActionResult DeleteUser(LoginCredential userCred)
+        {
+            User loginningUser = _sqlUserHandler.GetUser(userCred.Username);
+            if (loginningUser == null)
+            {
+                return BadRequest();
+            }
 
+            if (loginningUser.IsValidPassword(userCred.Password))
+            {
+                _sqlUserHandler.DeleteUser(userCred.Username);
+                return Ok("user successfully deleted");
+            }
+
+            return BadRequest();
+        }
 
     }
 }
