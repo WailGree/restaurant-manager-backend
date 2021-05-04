@@ -18,11 +18,13 @@ namespace RestaurantManager.Web.Controllers
         private readonly SQLMenuRepository _menu;
         private readonly SQLUserRepository _users;
         private SQLUserRepository _sqlUserHandler;
+        private SQLMenuRepository _sqlMenuHandler;
 
         public ApiController(RestaurantContext context)
         {
             _context = context;
             _sqlUserHandler = new SQLUserRepository(context);
+            _sqlMenuHandler = new SQLMenuRepository(context);
         }
 
 
@@ -93,6 +95,12 @@ namespace RestaurantManager.Web.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpGet("menu")]
+        public IEnumerable<MenuItem> GetMenu()
+        {
+            return _sqlMenuHandler.GetMenu();
         }
 
     }
