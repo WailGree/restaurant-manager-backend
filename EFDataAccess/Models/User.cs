@@ -9,7 +9,7 @@ namespace EFDataAccess.Models
 {
     public class User
     {
-        [Key] [MaxLength(100)] public string UserName { get; set; }
+        [Key] [MaxLength(100)] public string Username { get; set; }
         [Required] [MaxLength(200)] public string Email { get; set; }
         public string Token { get; set; }
         public string HashedPassword { get; set; }
@@ -19,10 +19,10 @@ namespace EFDataAccess.Models
         {
         }
 
-        public User(string userName, string email, string password)
+        public User(string username, string email, string password)
         {
             Salt = GenerateUniqueSaltForUser();
-            UserName = userName;
+            Username = username;
             Email = email;
             HashedPassword = HashingPassword(password);
         }
