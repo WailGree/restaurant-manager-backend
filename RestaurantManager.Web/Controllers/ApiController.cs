@@ -41,6 +41,24 @@ namespace RestaurantManager.Web.Controllers
             return Ok("successful registration");
         }
 
+        [HttpPost("login")]
+        public IActionResult Login(LoginCredential userCred)
+        {
+            User loginningUser = _sqlUserHandler.GetUser(userCred.Username);
+            if (loginningUser == null)
+            {
+                return BadRequest();
+            }
+
+            if (loginningUser.IsValidPassword(userCred.Password))
+            {
+                string token = _sqlUserHandler.GenerateTokenForUser(userCred.Username);
+                return Ok(token);
+            }
+
+            return BadRequest();
+        }
+
 
 
     }
