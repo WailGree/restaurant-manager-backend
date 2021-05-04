@@ -29,14 +29,14 @@ namespace RestaurantManager.Web.Controllers
         [HttpPost("registration")]
         public IActionResult Registration(RegistrationCredentials registrationCred)
         {
-            User regUser = _sqlUserHandler.GetUser(registrationCred.UserName);
+            User regUser = _sqlUserHandler.GetUser(registrationCred.Username);
             bool isLoginningUserEmailTaken = _sqlUserHandler.GetUsers().Any(x => x.Email == registrationCred.Email);
             if (regUser != null || isLoginningUserEmailTaken)
             {
                 return BadRequest("username or email already taken");
             }
 
-            User user = new User(registrationCred.UserName, registrationCred.Email, registrationCred.Password); // we should validate the password as well if it strong enough
+            User user = new User(registrationCred.Username, registrationCred.Email, registrationCred.Password); // we should validate the password as well if it strong enough
             _sqlUserHandler.AddUser(user);
             return Ok("successful registration");
         }
@@ -54,6 +54,24 @@ namespace RestaurantManager.Web.Controllers
             {
                 string token = _sqlUserHandler.GenerateTokenForUser(userCred.Username);
                 return Ok(token);
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout(AuthenticationCredential authentication)
+        {
+            User user = _sqlUserHandler.GetUser(authentication.Username);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            if (user.IsValidToken(authentication.Token))
+            {
+                _sqlUserHandler.DeleteUserToken(authentication.Username);
+                return Ok("successfully logged out");
             }
 
             return BadRequest();
