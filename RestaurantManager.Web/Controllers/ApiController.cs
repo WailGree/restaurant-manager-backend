@@ -44,21 +44,21 @@ namespace RestaurantManager.Web.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginCredential userCred)
+        public string Login(LoginCredential userCred)
         {
             User loginningUser = _sqlUserHandler.GetUser(userCred.Username);
             if (loginningUser == null)
             {
-                return BadRequest();
+                return null;
             }
 
             if (loginningUser.IsValidPassword(userCred.Password))
             {
                 string token = _sqlUserHandler.GenerateTokenForUser(userCred.Username);
-                return Ok(token);
+                return token;
             }
 
-            return BadRequest();
+            return null;
         }
 
         [HttpPost("logout")]
