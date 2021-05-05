@@ -24,7 +24,7 @@ namespace RestaurantManager.Tests
         }
 
         [Test]
-        public async Task Test1_Registration_ValidCredential_ShouldReturnOk()
+        public async Task Test11_Registration_ValidCredential_ShouldReturnOk()
         {
             // Arrange
             string url = "api/registration";
@@ -44,9 +44,30 @@ namespace RestaurantManager.Tests
             Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
         }
 
+        [Test]
+        public async Task Test12_Registration_RepeatingCredential_ShouldNotReturnOk()
+        {
+            // Arrange
+            string url = "api/registration";
+            RegistrationCredentials registrationCred =
+                new RegistrationCredentials("username", "password", "email@email.com");
+            string output = JsonConvert.SerializeObject(registrationCred);
+            var req = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(output,
+                    Encoding.UTF8, "application/json")
+            };
+
+            // Act
+            var response = await _client.SendAsync(req);
+
+            // Assert
+            Assert.IsFalse(response.StatusCode == HttpStatusCode.OK);
+        }
+
 
         [Test]
-        public async Task Test2_Login_ValidCredential_ShouldReturnToken()
+        public async Task Test21_Login_ValidCredential_ShouldReturnToken()
         {
             // Arrange
             string url = "api/login";
@@ -69,7 +90,30 @@ namespace RestaurantManager.Tests
         }
 
         [Test]
-        public async Task Test3_Logout_ValidCredential_ShouldReturnOk()
+        public async Task Test22_Login_NotValidCredential_ShouldNotReturnToken()
+        {
+            // Arrange
+            string url = "api/login";
+            LoginCredential loginCredential =
+                new LoginCredential("username", "WrongPassword");
+            string output = JsonConvert.SerializeObject(loginCredential);
+            var req = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(output,
+                    Encoding.UTF8, "application/json")
+            };
+
+            // Act
+            var response = await _client.SendAsync(req);
+
+            var notValidToken = response.Content.ReadAsStringAsync().Result;
+
+            // Assert
+            Assert.AreEqual("", notValidToken);
+        }
+
+        [Test]
+        public async Task Test31_Logout_ValidCredential_ShouldReturnOk()
         {
             // Arrange
             string url = "api/logout";
@@ -90,7 +134,28 @@ namespace RestaurantManager.Tests
         }
 
         [Test]
-        public async Task Test4_Delete_ValidCredential_ShouldReturnOk()
+        public async Task Test32_Logout_NotValidCredential_ShouldNotReturnOk()
+        {
+            // Arrange
+            string url = "api/logout";
+            AuthenticationCredential authenticationCredential =
+                new AuthenticationCredential("username", "");
+            string output = JsonConvert.SerializeObject(authenticationCredential);
+            var req = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(output,
+                    Encoding.UTF8, "application/json")
+            };
+
+            // Act
+            var response = await _client.SendAsync(req);
+
+            // Assert
+            Assert.IsFalse(response.StatusCode == HttpStatusCode.OK);
+        }
+
+        [Test]
+        public async Task Test41_Delete_ValidCredential_ShouldReturnOk()
         {
             // Arrange
             string url = "api/delete";
@@ -108,6 +173,27 @@ namespace RestaurantManager.Tests
 
             // Assert
             Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
+        }
+
+        [Test]
+        public async Task Test42_Delete_NotValidCredential_ShouldNotReturnOk()
+        {
+            // Arrange
+            string url = "api/delete";
+            LoginCredential loginCredential =
+                new LoginCredential("username", "WrongPassword");
+            string output = JsonConvert.SerializeObject(loginCredential);
+            var req = new HttpRequestMessage(HttpMethod.Delete, url)
+            {
+                Content = new StringContent(output,
+                    Encoding.UTF8, "application/json")
+            };
+
+            // Act
+            var response = await _client.SendAsync(req);
+
+            // Assert
+            Assert.IsFalse(response.StatusCode == HttpStatusCode.OK);
         }
     }
 }
