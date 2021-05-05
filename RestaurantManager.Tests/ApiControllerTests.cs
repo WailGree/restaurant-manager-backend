@@ -68,7 +68,26 @@ namespace RestaurantManager.Tests
             Assert.NotNull(_token);
         }
 
-      
+        [Test]
+        public async Task Test3_Logout_ValidCredential_ShouldReturnOk()
+        {
+            // Arrange
+            string url = "api/logout";
+            AuthenticationCredential authenticationCredential =
+                new AuthenticationCredential("username", _token);
+            string output = JsonConvert.SerializeObject(authenticationCredential);
+            var req = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(output,
+                    Encoding.UTF8, "application/json")
+            };
+
+            // Act
+            var response = await _client.SendAsync(req);
+
+            // Assert
+            Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
+        }
 
 
     }
