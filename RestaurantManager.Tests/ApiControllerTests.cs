@@ -7,7 +7,6 @@ using EFDataAccess.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using NUnit.Framework;
-
 using RestaurantManager.Web;
 using Xunit;
 
@@ -16,6 +15,7 @@ namespace RestaurantManager.Tests
     public class ApiControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         private HttpClient _client { get; }
+        private string _token;
 
         public ApiControllerTests()
         {
@@ -43,6 +43,33 @@ namespace RestaurantManager.Tests
             // Assert
             Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
         }
+
+
+        [Test]
+        public async Task Test2_Login_ValidCredential_ShouldReturnToken()
+        {
+            // Arrange
+            string url = "api/login";
+            LoginCredential loginCredential =
+                new LoginCredential("username", "password");
+            string output = JsonConvert.SerializeObject(loginCredential);
+            var req = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(output,
+                    Encoding.UTF8, "application/json")
+            };
+
+            // Act
+            var response = await _client.SendAsync(req);
+
+            _token = response.Content.ReadAsStringAsync().Result;
+
+            // Assert
+            Assert.NotNull(_token);
+        }
+
+      
+
 
     }
 }
