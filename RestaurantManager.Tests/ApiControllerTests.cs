@@ -89,6 +89,25 @@ namespace RestaurantManager.Tests
             Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
         }
 
+        [Test]
+        public async Task Test4_Delete_ValidCredential_ShouldReturnOk()
+        {
+            // Arrange
+            string url = "api/delete";
+            LoginCredential loginCredential =
+                new LoginCredential("username", "password");
+            string output = JsonConvert.SerializeObject(loginCredential);
+            var req = new HttpRequestMessage(HttpMethod.Delete, url)
+            {
+                Content = new StringContent(output,
+                    Encoding.UTF8, "application/json")
+            };
 
+            // Act
+            var response = await _client.SendAsync(req);
+
+            // Assert
+            Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
+        }
     }
 }
