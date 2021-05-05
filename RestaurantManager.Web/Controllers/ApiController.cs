@@ -103,5 +103,17 @@ namespace RestaurantManager.Web.Controllers
             return _sqlMenuHandler.GetMenu();
         }
 
+        [HttpGet("menu-item")]
+        public MenuItem GetMenuItem(int id)
+        {
+            return _sqlMenuHandler.getMenuItem(id);
+        }
+
+        [HttpDelete("delete-menu-item")]
+        public MenuItem DeleteMenuItem(int id)
+        {
+            return _sqlMenuHandler.DeleteMenuItem(id);
+        }
+
     }
 }
